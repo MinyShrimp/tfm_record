@@ -1,3 +1,9 @@
+<script>
+    function openAdd() {
+        $('#modal').load('/add_user');
+    }
+</script>
+
 <h2><b>종합</b></h2><hr>
 <table class='table table-striped' style='text-align: center;'>
     <thead class='thead-dark'>
@@ -19,8 +25,8 @@
             <td> {{ v['GenRank'] }} </td>
             <td> {{ v['UserName'] }} </td>
             <td> {{ v['Amount'] }} </td>
-            <td> {{ v['AverageRank'] }} </td>
             <td> {{ v['AverageScore'] }} </td>
+            <td> {{ v['AverageRank'] }} </td>
             <td> {{ v['Rank_1'] }} </td>
             <td> {{ v['Rank_2'] }} </td>
             <td> {{ v['Rank_3'] }} </td>
@@ -29,4 +35,15 @@
         {% endfor %}
     </tbody>
 </table>
-<button style='float:right; width: 10em;' type="button" class="btn btn-primary">신규 가입</button>
+<button style='float:right; width: 10em;' type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openAdd();">신규 가입</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal body -->
+            <div class="modal-body" id='modal'>
+            </div>
+        </div>
+    </div>
+</div>

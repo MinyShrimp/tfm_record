@@ -50,6 +50,18 @@ class DB:
     ##########################################################################################################
     ## public functions
     ##########################################################################################################
+    def get_user_names(self):
+        _datas = []
+        try:
+            self.__connect(False)
+            self.cur.execute("select UserName from user;")
+            _datas = self.cur.fetchall()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+        return _datas
+
     def get_users(self):
         _datas = []
         try:

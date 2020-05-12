@@ -9,22 +9,25 @@
 
     <!-- css -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- <link href="{{ url_for('static', filename='css/today_record.css') }}" rel="stylesheet"> -->
     <!-- <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet"> -->
     
     <!-- js -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
     <script>
         function changeView( value ) {
-            const views = ['/gen_record', '/today_record', '/search_record'];
+            const views = ['/gen_record', '/today_record', '/search_record', '/add_record'];
             $("#content").load(views[value-1]);
             document.cookie = 'index = ' + value + ';'; 
 
-            const objs = [ $('#navbarSupportedContent > ul > li:nth-child(1)'), $('#navbarSupportedContent > ul > li:nth-child(2)'), $('#navbarSupportedContent > ul > li:nth-child(3)') ];
+            const objs = [ $('#navbarSupportedContent > ul > li:nth-child(1)'), $('#navbarSupportedContent > ul > li:nth-child(2)'), $('#navbarSupportedContent > ul > li:nth-child(3)'), $('#navbarSupportedContent > ul > li:nth-child(2)') ];
             objs.forEach(element => {
                 $(element).removeClass('active');
             }); $(objs[value-1]).addClass('active');

@@ -18,15 +18,38 @@ def index():
 
 @app.route('/gen_record')
 def gen_record():
+    users = db.get_users()
     return make_response(render_template('gen_record.html',
-        users = db.get_users()
+        users = users
     )), 200
+
+@app.route('/add_user')
+def add_user():
+    return render_template('add_user.html'), 200
+
+@app.route('/insert_user')
+def insert_user():
+    name = request.args.get('name', '')
+    if name is not '':
+        pass
+    return redirect('/')
 
 @app.route('/today_record')
 def today_record():
     return make_response(render_template('today_record.html',
         datas = db.get_today_record()
     )), 200
+
+@app.route('/add_record')
+def add_record():
+    users = db.get_user_names()
+    return make_response(render_template('add_record.html',
+        users = users
+    )), 200
+
+@app.route('/insert_record')
+def insert_record():
+    return redirect('/')
 
 @app.route('/search_record')
 def search_record():
