@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<head>
+    <!-- config -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='UTF-8'>
+    <title> TTS 테라포밍마스 </title>
+    <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"> -->
+
+    <!-- css -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <!-- <link href="{{ url_for('static', filename='css/today_record.css') }}" rel="stylesheet"> -->
+    <!-- <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet"> -->
+    
+    <!-- js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+    <script>
+        function changeView( value ) {
+            const views = ['/gen_record', '/today_record', '/search_record'];
+            $("#content").load(views[value-1]);
+            document.cookie = 'index = ' + value + ';'; 
+
+            const objs = [ $('#navbarSupportedContent > ul > li:nth-child(1)'), $('#navbarSupportedContent > ul > li:nth-child(2)'), $('#navbarSupportedContent > ul > li:nth-child(3)') ];
+            objs.forEach(element => {
+                $(element).removeClass('active');
+            }); $(objs[value-1]).addClass('active');
+        }
+        function getCookie( name ) {
+            var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+            return value ? value[2] : null;
+        }
+        $(document).ready(function() {
+            var tmp = getCookie('index');
+            changeView(tmp === null ? 1 : parseInt(tmp));
+        });
+    </script>
+    
+</head>
+
+<body oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+    <div id='wrap'>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+            <a class="navbar-brand" href="/">TTS 테라포밍마스</a>
+
+            <!-- Toggler/collapsibe Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class='collapse navbar-collapse' id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" value=1 onclick='changeView(this.value);'>
+                        <a class="nav-link" style="cursor:pointer">종합</a>
+                    </li>
+                    <li class="nav-item" value=2 onclick='changeView(this.value);'>
+                        <a class="nav-link" style="cursor:pointer">일일 기록</a>
+                    </li>
+                    <li class="nav-item" value=3 onclick='changeView(this.value);'>
+                        <a class="nav-link" style="cursor:pointer">기록 검색</a>
+                    </li>                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://tinyurl.com/ttskrnotice" target="_blank">공지 사항</a>
+                    </li>
+                    <!-- Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a style="cursor:pointer" class="nav-link dropdown-toggle" id="navbardrop" data-toggle="dropdown"> 링크 </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="https://open.kakao.com/o/gX9x2wr" target="_blank">카카오톡(모임)</a>
+                            <a class="dropdown-item" href="https://open.kakao.com/o/gsFMvPob" target="_blank">카카오톡(소통)</a>
+                            <a class="dropdown-item" href="https://discord.gg/pQkUyuG" target="_blank">Discord</a>
+                            <a class="dropdown-item" href="http://cafe.naver.com/ttskr" target="_blank">네이버 카페</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div id='contents' style='background: #F5F5F5;'>
+        <div class='container' style='background: #FAFAFA; min-height: 100vh;'>
+            <br><br><br>
+            <div id='content'></div>
+            <br><br><br>
+        </div>
+    </div>
+</body>

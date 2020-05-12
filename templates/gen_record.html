@@ -1,0 +1,32 @@
+<h2><b>종합</b></h2><hr>
+<table class='table table-striped' style='text-align: center;'>
+    <thead class='thead-dark'>
+        <tr>
+            <th width=10%>등수</th>
+            <th>닉네임</th>
+            <th width=10%>판수</th>
+            <th width=10%>평균점수</th>
+            <th width=10%>평균등수</th>
+            <th width=10%>1등</th>
+            <th width=10%>2등</th>
+            <th width=10%>3등</th>
+            <th width=10%>4등</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in users %}
+        <tr>
+            <td> {{ v['GenRank'] }} </td>
+            <td> {{ v['UserName'] }} </td>
+            <td> {{ v['Amount'] }} </td>
+            <td> {{ v['AverageRank'] }} </td>
+            <td> {{ v['AverageScore'] }} </td>
+            <td> {{ v['Rank_1'] }} </td>
+            <td> {{ v['Rank_2'] }} </td>
+            <td> {{ v['Rank_3'] }} </td>
+            <td> {{ v['Rank_4'] }} </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<button style='float:right; width: 5em;' type="button" class="btn btn-primary">+</button>
