@@ -24,10 +24,8 @@ def gen_record():
 
 @app.route('/today_record')
 def today_record():
-    datas = db.get_today_record()
-    print(type(datas), datas)
     return make_response(render_template('today_record.html',
-        datas = datas
+        datas = db.get_today_record()
     )), 200
 
 @app.route('/search_record')
