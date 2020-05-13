@@ -1,5 +1,19 @@
 <h2><b>기록 입력</b></h2><hr>
 
+<style>
+    label {
+        width:20%; 
+        height:50px; 
+        border: 1px solid #dee2e6; 
+        line-height: 50px;
+    };
+
+    .on {
+        background-color: lightblue;
+    };
+
+</style>
+
 <script type="text/javascript">
     $(function () {
         var corporation = ["초보자용 기업","크레디코르 (Crdicor)","에코라인 (Ecoline)","헬리온 (Helion)","인터플래너터리 시네마틱스 (Interplanetary Cinematics)","인벤트릭스 (Inventrix)","광업협동조합 (Mining Guild)","포볼로그 (Phoblog)","타르시스 공화국(Tharsis Republic)","토르게이트 (Thorgate)","UNMI (United Nations Mars Initiative)","새턴 시스템 (Saturn Systems)","테랙터 (Teractor)","아프로디테 (Aphrodite)","셀레스틱 (Celectic)","매뉴테크 (Manutech)","모닝스타 인코퍼레이션 (Morning Star INC.)","바이론 (Viron)","쳉싱 마스 (Cheung Shing Mars)","포인트 루나 (Point Luna)","로빈슨 인더스트리 (Robinson Industries)","밸리 트러스트 (Valley Trust)","비토르 (Vitor)","아크라이트 (Arclight)","아리도르 (Aridor)","폴리페모스 (Polyphemos)","포세이돈 (Poseidon)","스톰크래프트 (Stormcraft)","레이크프론트 리조트 (Lakefront Resorts)","프리스타 (Pristar)","셉템 트리부스 (Septem Tribus)","테라랩스(Terralabs)","유토피아(Utopia Invest)","리사이클론 (Recyclon)","스플라이스 (Splice: Tactical Genomics)","아카디아 공동체 (Arcadian Communities)","몬스 손해보험 (Mons Insurance)","팩토럼 (Factorum)","필레어스 (Philares)"];
@@ -28,62 +42,65 @@
             }
         });
     });
+
+    function toggle(obj) {
+        if($(obj).val() == 0) {
+            $(obj).addClass('on');
+            $(obj).val(1);
+        } else {
+            $(obj).removeClass('on');
+            $(obj).val(0);
+        }        
+    }
 </script>
 
 <form action="/insert_user" id='add_user_form'>
     <div class='container'>
-        <div>
+        <div style='margin: 0 auto; text-align: center; '>
             <span style='font-size: 1.1em;'><b>확장팩</b></span>
-            <div class="custom-control custom-checkbox"> 
-                <input type="checkbox" name="extension" id="e1" value="1|" class="custom-control-input">
-                <label class="custom-control-label" for="e1">비너스 넥스트</label>
-            </div>
-            <div class="custom-control custom-checkbox"> 
-                <input type="checkbox" name="extension" id="e2" value="2|" class="custom-control-input">
-                <label class="custom-control-label" for="e2">서곡</label>
-            </div>
-            <div class="custom-control custom-checkbox"> 
-                <input type="checkbox" name="extension" id="e3" value="3|" class="custom-control-input">
-                <label class="custom-control-label" for="e3">개척기지</label>
-            </div>
-            <div class="custom-control custom-checkbox"> 
-                <input type="checkbox" name="extension" id="e4" value="4|" class="custom-control-input">
-                <label class="custom-control-label" for="e4">격동</label>
-            </div>
+        </div><br>
+        <div style='margin: 0 auto; text-align: center; '>
+            <input type="checkbox" name="extension" id="e1" class='ei' value="1|" style='/*display: none;*/'>
+            <label for="e1" onclick="toggle(this);" value='0'> 비너스 넥스트 </label>
+
+            <input type="checkbox" name="extension" id="e2" class='ei' value="2|" style='/*display: none;*/'>
+            <label for="e2" onclick="toggle(this);" value='0'> 서곡 </label>
+
+            <input type="checkbox" name="extension" id="e3" class='ei' value="3|" style='/*display: none;*/'>
+            <label for="e3" onclick="toggle(this);" value='0'> 개척기지 </label>
+
+            <input type="checkbox" name="extension" id="e4" class='ei' value="4|" style='/*display: none;*/'>
+            <label for="e4" onclick="toggle(this);" value='0'> 격동 </label>
         </div>
 
+        <br><br>
+        <div style='margin: 0 auto; text-align: center; '>
+            <span style='font-size: 1.1em;'><b>기록</b></span>
+        </div><br>
+
+        {% for _ in range(1,5) %}
+        <div style='margin: 0 auto; text-align: center; '>
+            <div style='width: 10%; display: inline-block;'>
+                <span style='font-size: 1.1em;'><b>{{_}}등</b></span>
+            </div>
+            <div style='width: 30%; display: inline-block;'>
+                <input name="name_id_{{_}}" style='display:none;'>
+                <input class="form-control name_input" id="usr_{{_}}" placeholder="닉네임" name="name_{{_}}" required>
+            </div>
+            <div style='width: 30%; display: inline-block;'>
+                <input name="corp_id_{{_}}" style='display:none;'>
+                <input class="form-control corp_input" id='corporation_{{_}}' placeholder="기업" name="corp_{{_}}" required>
+            </div>
+            <div style='width: 20%; display: inline-block;'>
+                <input class="form-control" id="score_{{_}}" placeholder="점수" name="score_{{_}}" required>
+            </div>
+        </div><br>
+        {% endfor %}
         <br>
-    
-        <span style='font-size: 1.1em;'><b>1등</b></span>
-        <table style='width:100%;'>
-            <tr>
-                <th style='width:80%;'><label for="usr_1">닉네임</label></th>
-                <th><label for="score_1">점수</label></th>
-            </tr>
-            <tr>
-                <th>
-                    <div class="form-group">
-                        <input name="id_1" style='display:none;'>
-                        <input class="form-control name_input" id="usr_1" placeholder="닉네임을 입력하세요" name="name_1" required>
-                    </div>
-                </th>
-                <th>
-                    <div class="form-group">
-                        <input class="form-control" id="score_1" placeholder="00" name="score_1" required>
-                    </div>
-                </th>
-            </tr>
-            <tr>
-                <th colspan=2>
-                    <div class="form-group">
-                        <label for="corporation_1">기업</label>
-                        <input class="form-control corp_input" id='corporation_1' placeholder="기업을 입력하세요" name="corp_1" required>
-                    </div>
-                </th>
-            </tr>
-        </table>
         <input name="time" style='display:none;'>
-        <button type="submit" class="btn btn-primary" style='width: 100%;'>Submit</button>
+        <div style='margin: 0 auto; text-align: center; '>
+            <button type="submit" class="btn btn-primary" style='width: 50%;'>등록</button>
+        </div>
     </div>
     
 </form>

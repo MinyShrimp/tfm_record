@@ -27,7 +27,7 @@ class DB:
         self.db_name = ""
     
     #def __connect(self, name):
-    def __connect(self, isDict):
+    def __connect(self):
         while True:
             if self.db == None:
                 self.db = pymysql.connect(
@@ -53,7 +53,7 @@ class DB:
     def get_user_names(self):
         _datas = []
         try:
-            self.__connect(False)
+            self.__connect()
             self.cur.execute("select UserName from user;")
             _datas = self.cur.fetchall()
         except Exception as e:
@@ -65,7 +65,7 @@ class DB:
     def get_users(self):
         _datas = []
         try:
-            self.__connect(False)
+            self.__connect()
             self.cur.execute("select * from user;")
             _datas = self.cur.fetchall()
         except Exception as e:
@@ -77,7 +77,7 @@ class DB:
     def get_today_record(self):
         _datas = []
         try:
-            self.__connect(True)
+            self.__connect()
 
             today = str(date.today())
             today = int(today.replace('-', ''))
@@ -89,3 +89,26 @@ class DB:
         finally:
             self.__close()
         return _datas
+
+    def insert_user(self, name):
+        try:
+            if is_regular([name]) is False:
+                raise TypeError
+            print("insert into user (UserName, AverageRank, AverageScore, GenRank, Amount, Rank_1, Rank_2, Rank_3, Rank_4) values ('{}', 0, 0, 0, 0, 0, 0, 0, 0);".format(name))
+            self.__connect()
+            self.cur.execute("insert into user (UserName, AverageRank, AverageScore, GenRank, Amount, Rank_1, Rank_2, Rank_3, Rank_4) values ('{}', 0, 0, 0, 0, 0, 0, 0, 0);".format(name))
+            self.db.commit()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+    
+    def insert_record(self, user_datas, extension):
+        try:
+            self.__connect()
+            #self.cur.execute("insert into TFM (UserID_1, UserName_1, Score_1, Company_1, UserID_2, UserName_2, Score_2, Company_2, UserID_3, UserName_3, Score_3, Company_3, UserID_4, UserName_4, Score_4, Company_4, DATE_TIME, Extension) values ('{}', 0, 0, 0, 0, 0, 0, 0, 0);".format(name))
+            self.db.commit()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()

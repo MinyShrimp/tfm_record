@@ -31,7 +31,7 @@ def add_user():
 def insert_user():
     name = request.args.get('name', '')
     if name is not '':
-        pass
+        db.insert_user(name)
     return redirect('/')
 
 @app.route('/today_record')
@@ -44,7 +44,8 @@ def today_record():
 def add_record():
     users = db.get_user_names()
     return make_response(render_template('add_record.html',
-        users = users
+        users = users,
+        range = range
     )), 200
 
 @app.route('/insert_record')
