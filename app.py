@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, render_template, make_response, send_from_directory, redirect
 from module.db import DB
 
+from datetime import datetime, time
+
 app = Flask(__name__)
 db = DB()
 
@@ -19,13 +21,34 @@ def index():
 @app.route('/gen_record')
 def gen_record():
     users = db.get_users()
+
     return make_response(render_template('gen_record.html',
-        users = users
+        users = users,
+        enumerate = enumerate
     )), 200
+
+@app.route('/name_check')
+def name_check():
+    username = request.args.get('name', '')
+    if username == '':
+        overlap = 'none'
+    else:
+        try:
+            users = db.get_user_by_name(username)
+            if len(users) == 0:
+                overlap = 'pass'
+            else:
+                overlap = 'fail'
+        except:
+            overlap = 'fail'
+
+    context = { 'overlap': overlap }
+    return jsonify(context)
 
 @app.route('/add_user')
 def add_user():
-    return render_template('add_user.html'), 200
+    users = db.get_user_names()
+    return render_template('add_user.html', users = [_['UserName'] for _ in users]), 200
 
 @app.route('/insert_user')
 def insert_user():
@@ -36,20 +59,54 @@ def insert_user():
 
 @app.route('/today_record')
 def today_record():
+    EXT = ['', '비너스 넥스트', '서곡', '개척기지', '격동']
+
+    datas = db.get_today_record()
+    for v in datas:
+        ext = v['Extension']
+        v['Extension'] = ""
+        _tmp = ext.split('|')[:-1]
+        for i, _ in enumerate(_tmp):
+            if i == len(_tmp) - 1:
+                v['Extension'] += EXT[int(_)]
+            else:
+                v['Extension'] += EXT[int(_)] + ", "
+
+        _time = v['DATE_TIME']
+        v['DATE_TIME'] = str(datetime.fromtimestamp(_time).time())
+
     return make_response(render_template('today_record.html',
-        datas = db.get_today_record()
+        datas = datas
     )), 200
 
 @app.route('/add_record')
 def add_record():
-    users = db.get_user_names()
     return make_response(render_template('add_record.html',
-        users = users,
+        users = db.get_user_names(),
+        companys = db.get_company_names(),
         range = range
     )), 200
 
 @app.route('/insert_record')
 def insert_record():
+    extension = request.args.get('extension', '')
+    users = [ 
+        [ request.args.get('name_id_1', ''), request.args.get('name_1', ''), request.args.get('corp_id_1', ''), request.args.get('corp_1', ''), request.args.get('score_1', 0) ],
+        [ request.args.get('name_id_2', ''), request.args.get('name_2', ''), request.args.get('corp_id_2', ''), request.args.get('corp_2', ''), request.args.get('score_2', 0) ],
+        [ request.args.get('name_id_3', ''), request.args.get('name_3', ''), request.args.get('corp_id_3', ''), request.args.get('corp_3', ''), request.args.get('score_3', 0) ],
+        [ request.args.get('name_id_4', ''), request.args.get('name_4', ''), request.args.get('corp_id_4', ''), request.args.get('corp_4', ''), request.args.get('score_4', 0) ],
+    ]
+    db.insert_record(users, extension)
+
+    for i, user in enumerate(users):
+        tmp = db.get_user(user[0])[0]
+        tmp['AverageScore'] = ((tmp['AverageScore'] * tmp['Amount']) + int(user[4])) / (tmp['Amount'] + 1)
+        tmp['AverageRank'] = ((tmp['AverageRank'] * tmp['Amount']) + (i + 1)) / (tmp['Amount'] + 1)
+        tmp['Rank_{}'.format((i+1))] += 1
+        tmp['Amount'] += 1
+
+        db.update_user(tmp)
+
     return redirect('/')
 
 @app.route('/search_record')

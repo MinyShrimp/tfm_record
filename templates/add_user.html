@@ -1,9 +1,55 @@
+<script>
+    function name_check() {
+        $.ajax({
+            url: "/name_check",
+            data: {
+                'name': $('#usr').val()
+            },
+            datatype: 'json',
+            success: function(data) {
+                if( data['overlap'] == 'fail' ) {
+                    alert('중복된 닉네임입니다.');
+                } else if( data['overlap'] == 'none' ) {
+                    alert('닉네임을 입력해주세요.');
+                } else {
+                    alert('사용가능한 닉네임입니다.');
+                    $('#check').attr('disabled', true);
+                }
+            }
+        })
+    }
+
+    $("#add_user_form").submit(function(e) {
+        if( !($('#check').is(":disabled")) ) {
+            alert('중복확인을 눌러주세요.');
+            e.preventDefault();
+        }
+    })
+</script>
+
+<style>
+    #usr {
+        display: inline-block;
+        width: 80%;
+    }
+
+    #check {
+        display: inline-block;
+        width: 18%;
+        height: 38px;
+        position: absolute;
+        font-size: 12px;
+        margin-left: 4px;
+    }
+</style>
+
 <form action="/insert_user" id='add_user_form' class="was-validated">
     <div class="form-group">
-        <label for="usr">Nickname</label>
-        <input type="text" class="form-control" id="usr" placeholder="닉네임을 입력하세요" name="name" required>
-        <div class="valid-feedback">Valid.</div>
-        <div class="invalid-feedback">Please fill out this field.</div>
+        <label for="usr">닉네임</label>
+        <div style='width: 100%;'>
+            <input type="text" class="form-control" id="usr" placeholder="닉네임을 입력하세요" name="name">
+            <button type="button" class="btn btn-primary" onclick='name_check();' onsubmit="return false;" id='check'>중복확인</button>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary" style='width: 100%;' onclick="bsubmit();">Submit</button>
+    <button type="submit" class="btn btn-primary" style='width: 100%;'>Submit</button>
 </form>

@@ -1,26 +1,51 @@
 <h2><b>기록 입력</b></h2><hr>
 
+<!--<link href="{{ url_for('static', filename='css/add_record.css') }}" rel="stylesheet">-->
 <style>
-    label {
+    .label {
         width:20%; 
         height:50px; 
         border: 1px solid #dee2e6; 
         line-height: 50px;
-    };
+        background: white;
+    }
 
-    .on {
-        background-color: lightblue;
-    };
+    .checked {
+        background: lightblue !important;
+    }
 
+    @media all and (max-width:768px) {
+        .label {
+            display: block;
+            width: 80%;
+            margin: 0 auto;
+            margin-bottom: 1em;
+        }
+    }
 </style>
 
 <script type="text/javascript">
+    function toggle(obj) {
+        if($(obj).val() == 0) {
+            $(obj).addClass('checked');
+            $(obj).val(1);
+        } else {
+            $(obj).removeClass('checked');
+            $(obj).val(0);
+        }        
+    }
+
     $(function () {
-        var corporation = ["초보자용 기업","크레디코르 (Crdicor)","에코라인 (Ecoline)","헬리온 (Helion)","인터플래너터리 시네마틱스 (Interplanetary Cinematics)","인벤트릭스 (Inventrix)","광업협동조합 (Mining Guild)","포볼로그 (Phoblog)","타르시스 공화국(Tharsis Republic)","토르게이트 (Thorgate)","UNMI (United Nations Mars Initiative)","새턴 시스템 (Saturn Systems)","테랙터 (Teractor)","아프로디테 (Aphrodite)","셀레스틱 (Celectic)","매뉴테크 (Manutech)","모닝스타 인코퍼레이션 (Morning Star INC.)","바이론 (Viron)","쳉싱 마스 (Cheung Shing Mars)","포인트 루나 (Point Luna)","로빈슨 인더스트리 (Robinson Industries)","밸리 트러스트 (Valley Trust)","비토르 (Vitor)","아크라이트 (Arclight)","아리도르 (Aridor)","폴리페모스 (Polyphemos)","포세이돈 (Poseidon)","스톰크래프트 (Stormcraft)","레이크프론트 리조트 (Lakefront Resorts)","프리스타 (Pristar)","셉템 트리부스 (Septem Tribus)","테라랩스(Terralabs)","유토피아(Utopia Invest)","리사이클론 (Recyclon)","스플라이스 (Splice: Tactical Genomics)","아카디아 공동체 (Arcadian Communities)","몬스 손해보험 (Mons Insurance)","팩토럼 (Factorum)","필레어스 (Philares)"];
+        var corporation = [
+            {% for _ in companys %}
+            {label: "{{ _['Name'] }}", value: "{{ _['Name'] }}", id: "{{ _['ID'] }}"},
+            {% endfor %}    
+        ];
         $(".corp_input").autocomplete({
             source: corporation,
             select: function (event, ui) {
-                console.log(ui.item);
+                let id = $(this).attr('id');
+                $('#corp_id_' + id.charAt(id.length - 1)).val( ui.item.id );
             },
             focus: function (event, ui) {
                 return false;
@@ -29,13 +54,14 @@
 
         var names = [
             {% for _ in users %}
-            "{{ _['UserName'] }}",
+            {label: "{{ _['UserName'] }}", value: "{{ _['UserName'] }}", id: "{{ _['ID'] }}"},
             {% endfor %}
         ];
         $(".name_input").autocomplete({
             source: names,
             select: function (event, ui) {
-                console.log(ui.item);
+                let id = $(this).attr('id');
+                $('#name_id_' + id.charAt(id.length - 1)).val( ui.item.id );
             },
             focus: function (event, ui) {
                 return false;
@@ -43,34 +69,55 @@
         });
     });
 
-    function toggle(obj) {
-        if($(obj).val() == 0) {
-            $(obj).addClass('on');
-            $(obj).val(1);
-        } else {
-            $(obj).removeClass('on');
-            $(obj).val(0);
-        }        
-    }
+    $("#add_record_form").submit(function(e) {
+        if( $('#usr_1').val() === $('#usr_2').val() || $('#usr_2').val() === $('#usr_3').val() || $('#usr_3').val() === $('#usr_4').val() ) {
+            alert('이름을 확인해주세요.'); e.preventDefault();
+        }
+
+        if( $('#corporation_1').val() === $('#corporation_2').val() || $('#corporation_2').val() === $('#corporation_3').val() || $('#corporation_3').val() === $('#corporation_4').val() ) {
+            alert('기업을 확인해주세요.'); e.preventDefault();
+        }
+
+        if( $('#score_1').val()/1 < $('#score_2').val()/1 || $('#score_2').val()/1 < $('#score_3').val()/1 || $('#score_3').val()/1 < $('#score_4').val()/1 ) {
+            alert('점수를 확인해주세요.'); e.preventDefault();
+        }
+
+        let ext_msg = "";
+        for(var i = 1; i <= 4; i++) {
+            if($('#e'+i).is(":checked")) {
+                ext_msg += $('#e'+i).val();
+            }
+        }
+        $('#ext').val( ext_msg );
+
+        document.cookie = 'index = 2;'; 
+    })
+
+    $(document).keydown(function(e) {
+        if( e.keyCode === 13 ) {
+            e.preventDefault();
+        }
+    });
 </script>
 
-<form action="/insert_user" id='add_user_form'>
+<form action="/insert_record" id='add_record_form'>
     <div class='container'>
         <div style='margin: 0 auto; text-align: center; '>
             <span style='font-size: 1.1em;'><b>확장팩</b></span>
         </div><br>
         <div style='margin: 0 auto; text-align: center; '>
-            <input type="checkbox" name="extension" id="e1" class='ei' value="1|" style='/*display: none;*/'>
-            <label for="e1" onclick="toggle(this);" value='0'> 비너스 넥스트 </label>
+            <input type='text' name="extension" id="ext" style='display: none;'>
+            <input type="checkbox" id="e1" value="1|" style='display: none;'>
+            <label for="e1" onclick="toggle(this);" value='0' class='label'> 비너스 넥스트 </label>
 
-            <input type="checkbox" name="extension" id="e2" class='ei' value="2|" style='/*display: none;*/'>
-            <label for="e2" onclick="toggle(this);" value='0'> 서곡 </label>
+            <input type="checkbox" id="e2" value="2|" style='display: none;'>
+            <label for="e2" onclick="toggle(this);" value='0' class='label'> 서곡 </label>
 
-            <input type="checkbox" name="extension" id="e3" class='ei' value="3|" style='/*display: none;*/'>
-            <label for="e3" onclick="toggle(this);" value='0'> 개척기지 </label>
+            <input type="checkbox" id="e3" value="3|" style='display: none;'>
+            <label for="e3" onclick="toggle(this);" value='0' class='label'> 개척기지 </label>
 
-            <input type="checkbox" name="extension" id="e4" class='ei' value="4|" style='/*display: none;*/'>
-            <label for="e4" onclick="toggle(this);" value='0'> 격동 </label>
+            <input type="checkbox" id="e4" value="4|" style='display: none;'>
+            <label for="e4" onclick="toggle(this);" value='0' class='label'> 격동 </label>
         </div>
 
         <br><br>
@@ -84,11 +131,11 @@
                 <span style='font-size: 1.1em;'><b>{{_}}등</b></span>
             </div>
             <div style='width: 30%; display: inline-block;'>
-                <input name="name_id_{{_}}" style='display:none;'>
+                <input id="name_id_{{_}}" name="name_id_{{_}}" style='display:none;'>
                 <input class="form-control name_input" id="usr_{{_}}" placeholder="닉네임" name="name_{{_}}" required>
             </div>
             <div style='width: 30%; display: inline-block;'>
-                <input name="corp_id_{{_}}" style='display:none;'>
+                <input id="corp_id_{{_}}" name="corp_id_{{_}}" style='display:none;'>
                 <input class="form-control corp_input" id='corporation_{{_}}' placeholder="기업" name="corp_{{_}}" required>
             </div>
             <div style='width: 20%; display: inline-block;'>
@@ -97,7 +144,16 @@
         </div><br>
         {% endfor %}
         <br>
-        <input name="time" style='display:none;'>
+
+        <div style="border: 1px solid #aaa; width: 80%; padding: 1em; margin: 0 auto;">
+            <div style="text-align: center; color: red; margin-bottom: 1em;"><b>등록하기전에 확인해주세요.</b></div>
+            <div style="text-align: center;">
+                닉네임과 기업을 검색하고 선택하셨습니까? 선택하셔야 제대로 등록이 됩니다.<br>
+                닉네임이 등록이 되어있지 않으면 먼저 <b>"종합" > "신규 가입"</b> 를 선택하여 등록해주세요.
+            </div>
+        </div>
+        <br>
+
         <div style='margin: 0 auto; text-align: center; '>
             <button type="submit" class="btn btn-primary" style='width: 50%;'>등록</button>
         </div>

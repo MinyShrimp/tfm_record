@@ -1,3 +1,5 @@
+
+<!-- <link href="{{ url_for('static', filename='css/today_record.css') }}" rel="stylesheet"> -->
 <style>
     .today {
         width: 100%; 
@@ -16,14 +18,15 @@
     }
 
     .plusBtn {
-        float:right; 
-        margin-top: 1em;
+        position: fixed;
+        left: 50vw;
+        top: 90vh;
     }
 </style>
 
 <h2><b>일일 기록</b></h2><hr>
 <br>
-<div id='today_record'>
+<div id='today_record' style='width: 100%;'>
     {% for v in datas %}
     <div class='today'>
         <table class='table table-striped'>

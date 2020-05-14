@@ -4,6 +4,12 @@
     }
 </script>
 
+<style>
+    .table tr:last-child {
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>
+
 <h2><b>종합</b></h2><hr>
 <table class='table table-striped' style='text-align: center;'>
     <thead class='thead-dark'>
@@ -20,9 +26,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for v in users %}
+        {% for i, v in enumerate(users) %}
         <tr>
-            <td> {{ v['GenRank'] }} </td>
+            <td> {{ i + 1 }} </td>
             <td> {{ v['UserName'] }} </td>
             <td> {{ v['Amount'] }} </td>
             <td> {{ v['AverageScore'] }} </td>
@@ -39,7 +45,7 @@
 
 <!-- The Modal -->
 <div class="modal" id="myModal">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <!-- Modal body -->
             <div class="modal-body" id='modal'>
