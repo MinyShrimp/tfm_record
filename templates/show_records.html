@@ -1,0 +1,73 @@
+<!-- <link href="{{ url_for('static', filename='css/today_record.css') }}" rel="stylesheet"> -->
+<style>
+    .today {
+        width: 100%; 
+        padding-top: 1em;
+        padding-bottom: 0;
+        text-align: center;
+        border-bottom: 1px solid black;
+    }
+
+    .today:first-child {
+        border-top: 1px solid black;
+    }
+
+    .today th, .today td {
+        border: none;
+    }
+
+    .plusBtn {
+        position: fixed;
+        left: 50vw;
+        top: 90vh;
+    }
+</style>
+
+<div>
+    <div style='text-align: center; margin-top: 0;'>result {{ len }}</div>
+    <br>
+    {% for v in datas %}
+    <div class='today'>
+        <table class='table table-striped'>
+            <thead>
+                <tr style='border-bottom: 1px solid #dee2e6;'>
+                    <th colspan="3" style='font-size: 30px; border: none;'> {{ v['Extension'] }} </th>
+                    <th style='text-align: right; border: none;'> {{ v['DATE_TIME'] }} </th>
+                </tr>
+                <tr>
+                    <th style='width: 10%'> 등수 </th>
+                    <th style='width: 30%'> 닉네임 </th>
+                    <th> 기업 </th>
+                    <th style='width: 10%'> 점수 </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th> 1등 </th>
+                    <td> {{ v['UserName_1'] }} </td>
+                    <td> {{ v['Company_1'] }} </td>
+                    <td> {{ v['Score_1'] }} </td>
+                </tr>
+                <tr>
+                    <th> 2등 </th>
+                    <td> {{ v['UserName_2'] }} </td>
+                    <td> {{ v['Company_2'] }} </td>
+                    <td> {{ v['Score_2'] }} </td>
+                </tr>
+                <tr>
+                    <th> 3등 </th>
+                    <td> {{ v['UserName_3'] }} </td>
+                    <td> {{ v['Company_3'] }} </td>
+                    <td> {{ v['Score_3'] }} </td>
+                </tr>
+                <tr>
+                    <th> 4등 </th>
+                    <td> {{ v['UserName_4'] }} </td>
+                    <td> {{ v['Company_4'] }} </td>
+                    <td> {{ v['Score_4'] }} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</div>

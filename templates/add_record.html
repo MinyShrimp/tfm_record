@@ -36,13 +36,26 @@
     }
 
     $(function () {
-        var corporation = [
-            {% for _ in companys %}
-            {label: "{{ _['Name'] }}", value: "{{ _['Name'] }}", id: "{{ _['ID'] }}"},
-            {% endfor %}    
-        ];
         $(".corp_input").autocomplete({
-            source: corporation,
+            source: function( request, response ) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_corps',
+                    dataType: 'json',
+                    data: { value: request.term },
+                    success: function(data) {
+                        response(
+                            $.map(data, function(item) {
+                                return {
+                                    label: item.Name,
+                                    value: item.Name,
+                                    id: item.ID
+                                };
+                            })
+                        );
+                    }
+                });
+            },
             select: function (event, ui) {
                 let id = $(this).attr('id');
                 $('#corp_id_' + id.charAt(id.length - 1)).val( ui.item.id );
@@ -52,13 +65,26 @@
             }
         });
 
-        var names = [
-            {% for _ in users %}
-            {label: "{{ _['UserName'] }}", value: "{{ _['UserName'] }}", id: "{{ _['ID'] }}"},
-            {% endfor %}
-        ];
         $(".name_input").autocomplete({
-            source: names,
+            source: function( request, response ) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_names',
+                    dataType: 'json',
+                    data: { value: request.term },
+                    success: function(data) {
+                        response(
+                            $.map(data, function(item) {
+                                return {
+                                    label: item.UserName,
+                                    value: item.UserName,
+                                    id: item.ID
+                                };
+                            })
+                        );
+                    }
+                });
+            },
             select: function (event, ui) {
                 let id = $(this).attr('id');
                 $('#name_id_' + id.charAt(id.length - 1)).val( ui.item.id );

@@ -62,9 +62,27 @@ class DB:
             self.__close()
         return _datas
     
+    def get_company_names_by_name(self, name):
+        _datas = []
+        try:
+            if is_regular([name]) is False:
+                raise TypeError
+
+            self.__connect()
+            self.cur.execute("select * from TFM_COMPANY where Name like '%{}%';".format(name))
+            _datas = self.cur.fetchall()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+        return _datas
+    
     def get_user(self, id):
         _datas = []
         try:
+            if is_regular([id]) is False:
+                raise TypeError
+
             self.__connect()
             self.cur.execute("select * from user where ID='{}';".format(id))
             _datas = self.cur.fetchall()
@@ -77,6 +95,9 @@ class DB:
     def get_user_by_name(self, name):
         _datas = []
         try:
+            if is_regular([name]) is False:
+                raise TypeError
+
             self.__connect()
             self.cur.execute("select * from user where UserName='{}';".format(name))
             _datas = self.cur.fetchall()
@@ -98,6 +119,18 @@ class DB:
             self.__close()
         return _datas
 
+    def get_users_plus(self):
+        _datas = []
+        try:
+            self.__connect()
+            self.cur.execute("select * from user where Amount=0 ORDER BY UserName;")
+            _datas = self.cur.fetchall()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+        return _datas
+
     def get_user_names(self):
         _datas = []
         try:
@@ -110,19 +143,26 @@ class DB:
             self.__close()
         return _datas
     
-    def get_today_record(self):
+    def get_user_names_by_name(self, name):
+        _datas = []
+        try:
+            if is_regular([name]) is False:
+                raise TypeError
+
+            self.__connect()
+            self.cur.execute("select ID, UserName from user where UserName like '%{}%';".format(name))
+            _datas = self.cur.fetchall()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+        return _datas
+    
+    def get_record(self, startT, endT, name, ext, is_sort=False):
         _datas = []
         try:
             self.__connect()
-
-            d = date.today()
-            t = time(0, 0, 0, 0)
-            today = datetime.combine(d, t).timestamp()
-
-            d += timedelta(days=1)
-            nextday = datetime.combine(d, t).timestamp()
-
-            self.cur.execute("select * from TFM where DATE_TIME between {} and {} ORDER BY DATE_TIME DESC;".format(today, nextday))
+            self.cur.execute("select * from TFM where DATE_TIME between {} and {} and Users like '%{}%' and Extension like '%{}%' ORDER BY DATE_TIME {};".format(startT, endT, name, ext, "" if is_sort else "DESC"))
             _datas = self.cur.fetchall()
         except Exception as e:
             print("파일 연결 실패", e)  
@@ -153,13 +193,15 @@ class DB:
                 {}, '{}', {}, {}, '{}', 
                 {}, '{}', {}, {}, '{}', 
                 {}, '{}', {}, {}, '{}', 
-                {}, '{}'
+                {}, '{}', '{}', '{}'
             """.format(
                 user_datas[0][0], user_datas[0][1], user_datas[0][4], user_datas[0][2], user_datas[0][3], 
                 user_datas[1][0], user_datas[1][1], user_datas[1][4], user_datas[1][2], user_datas[1][3], 
                 user_datas[2][0], user_datas[2][1], user_datas[2][4], user_datas[2][2], user_datas[2][3], 
                 user_datas[3][0], user_datas[3][1], user_datas[3][4], user_datas[3][2], user_datas[3][3], 
-                _time, extension
+                _time, extension, 
+                user_datas[0][1]+user_datas[1][1]+user_datas[2][1]+user_datas[3][1],
+                user_datas[0][3]+user_datas[1][3]+user_datas[2][3]+user_datas[3][3],
             )
 
             if is_regular(data) is False:
@@ -173,7 +215,7 @@ class DB:
                     UserID_2, UserName_2, Score_2, CompanyID_2, Company_2, 
                     UserID_3, UserName_3, Score_3, CompanyID_3, Company_3, 
                     UserID_4, UserName_4, Score_4, CompanyID_4, Company_4, 
-                    DATE_TIME, Extension
+                    DATE_TIME, Extension, Users, Companys
                 ) values ({});""".format(data)
             )
             self.db.commit()
@@ -186,7 +228,7 @@ class DB:
         try:
             tmp = ""
             for _ in list(data.values()):
-                tmp += _
+                tmp += str(_)
             
             if is_regular(tmp) is False:
                 print(data)

@@ -25,6 +25,12 @@
             e.preventDefault();
         }
     })
+
+    $("#usr").on("propertychange change keyup paste input", function() {
+        if( ($('#check').is(":disabled")) ) {
+            $('#check').attr('disabled', false);
+        }
+    })
 </script>
 
 <style>
@@ -43,7 +49,7 @@
     }
 </style>
 
-<form action="/insert_user" id='add_user_form' class="was-validated">
+<form action="/insert_user" id='add_user_form'>
     <div class="form-group">
         <label for="usr">닉네임</label>
         <div style='width: 100%;'>

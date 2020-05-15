@@ -1,1 +1,155 @@
 <h2><b>기록 검색</b></h2><hr>
+
+<!--<link href="{{ url_for('static', filename='css/add_record.css') }}" rel="stylesheet">-->
+<style>
+    .label {
+        width:20%; 
+        height:50px; 
+        border: 1px solid #dee2e6; 
+        line-height: 50px;
+        background: white;
+    }
+
+    .checked {
+        background: lightblue !important;
+    }
+
+    @media all and (max-width:768px) {
+        .label {
+            display: block;
+            width: 80%;
+            margin: 0 auto;
+            margin-bottom: 1em;
+        }
+    }
+</style>
+
+<script>
+    function toggle(obj) {
+        if($(obj).val() == 0) {
+            $(obj).addClass('checked');
+            $(obj).val(1);
+        } else {
+            $(obj).removeClass('checked');
+            $(obj).val(0);
+        }        
+    }
+
+    $(function() {
+        $("#name").autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_names',
+                    dataType: 'json',
+                    data: { value: request.term },
+                    success: function(data) {
+                        response(
+                            $.map(data, function(item) {
+                                return {
+                                    label: item.UserName,
+                                    value: item.UserName,
+                                    id: item.ID
+                                };
+                            })
+                        );
+                    }
+                });
+            },
+            select: function (event, ui) {
+                let id = $(this).attr('id');
+                $('#name_id_' + id.charAt(id.length - 1)).val( ui.item.id );
+            },
+            focus: function (event, ui) {
+                return false;
+            }
+        });
+    });      
+
+    $(document).ready(function() {
+        $("#submit").click(function() {
+            let ext_msg = "";
+            for(var i = 1; i <= 4; i++) {
+                if($('#e'+i).is(":checked")) {
+                    ext_msg += $('#e'+i).val();
+                }
+            }
+            $('#ext').val( ext_msg );
+            $("#records").load(
+                $("#search_record").attr('action'),
+                $("#search_record").serialize()
+            );
+        });
+
+        $(document).keydown(function(e) {
+            if( e.keyCode === 13 ) {
+                e.preventDefault();
+            }
+        });
+
+        let today = new Date();   
+        let year = today.getFullYear(), month = today.getMonth() + 1, day = today.getDay();
+        month = month >= 10 ? month : '0' + month;
+        day = day >= 10 ? day : '0' + day;
+
+        $("#start").val( year + "-" + month + "-" + day );
+
+        let nextday = new Date(today); nextday.setDate(today.getDate() + 1);
+        year = nextday.getFullYear(), month = nextday.getMonth() + 1, day = nextday.getDay();
+        month = month >= 10 ? month : '0' + month;
+        day = day >= 10 ? day : '0' + day;
+
+        $("#end").val( year + "-" + month + "-" + day );
+    });
+</script>
+
+<form id='search_record' action='/show_records'>
+    <div class='container'>
+        <table width=100%>
+            <tr>
+                <td width=50%>
+                    <label for='start'><b>기간</b></label><br>
+                    <div style="display: inline-block;">
+                        <input type='date' class='form-control' id='start' name='start' value='2020-05-15'>
+                    </div> 
+                    <span>~</span>
+                    <div style="display: inline-block;">
+                        <input type='date' class='form-control' id='end' name='end' value='2020-05-15'>
+                    </div>
+                </td>
+                <td width=50%>
+                    <label for='name'><b>이름</b></label><br>
+                    <div>
+                        <input class='form-control' id='name' name='name' placeholder="이름">
+                    </div> 
+                </td>
+            </tr>
+        </table>
+        <br><br>
+        <div style='margin: 0 auto; text-align: center;'>
+            <label><b>확장팩</b></label>
+        </div>
+        <div style='margin: 0 auto; text-align: center; '>
+            <input type='text' name="extension" id="ext" style='display: none;'>
+            <input type="checkbox" id="e1" value="1|" style='display: none;'>
+            <label for="e1" onclick="toggle(this);" value='0' class='label'> 비너스 넥스트 </label>
+
+            <input type="checkbox" id="e2" value="2|" style='display: none;'>
+            <label for="e2" onclick="toggle(this);" value='0' class='label'> 서곡 </label>
+
+            <input type="checkbox" id="e3" value="3|" style='display: none;'>
+            <label for="e3" onclick="toggle(this);" value='0' class='label'> 개척기지 </label>
+
+            <input type="checkbox" id="e4" value="4|" style='display: none;'>
+            <label for="e4" onclick="toggle(this);" value='0' class='label'> 격동 </label>
+        </div>
+        <div>
+            <button type='button' id='submit' class='btn btn-primary' style='float: right;'>검색</button>
+        </div>
+        <br><br>
+    </div>
+</form>
+<hr>
+<div class='container'>
+    <div id='records'></div>
+</div>
