@@ -194,7 +194,25 @@ def insert_record():
 def search_record():
     return render_template('search_record.html')
 
+@app.route('/insert_improvements')
+def insert_improvements():
+    date_time = datetime.now().timestamp()
+
+    data = { 
+        'uID': request.args.get('name_id', ''),
+        'uName': request.args.get('name', ''),
+        'Contents': request.args.get('contents', ''),
+        'DATE_TIME': date_time
+    }
+    isSuccess = db.insert_imrovements(data)
+    
+    return jsonify({'isSuccess': isSuccess})
+
+@app.route('/improvements')
+def improvements():
+    return render_template('improvements.html')
+
 if __name__ == "__main__":
-    #app.run(host='127.0.0.1', port=80, debug=True)
+    app.run(host='127.0.0.1', port=80, debug=True)
     #app.run(host='0.0.0.0', port=80)
-    app.run(host='0.0.0.0', port=443, ssl_context=('./.https/certificate.crt', './.https/private.key'))
+    #app.run(host='0.0.0.0', port=443, ssl_context=('./.https/certificate.crt', './.https/private.key'))

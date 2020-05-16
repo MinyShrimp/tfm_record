@@ -195,6 +195,28 @@ class DB:
             print("파일 연결 실패", e)  
         finally:
             self.__close()
+
+    def insert_imrovements(self, data):
+        isSuccess = False
+        try:
+            _data = """
+                {}, '{}', '{}', {}
+            """.format(data['uID'], data['uName'], data['Contents'], data['DATE_TIME'])
+
+            if is_regular([_data]) is False:
+                print(_data)
+                raise TypeError
+            
+            self.__connect()
+            self.cur.execute("insert into Improvements (uID, uName, Contents, DATE_TIME) values ({});".format(_data))
+            self.db.commit()
+
+            isSuccess = True
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+        return isSuccess
     
     def insert_record(self, user_datas, extension):
         try:

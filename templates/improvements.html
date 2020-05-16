@@ -1,0 +1,120 @@
+<style>
+    .input-check {
+        border: 2px solid lightblue !important;
+    }
+</style>
+
+<script>
+    var name_check = false;
+    $(function () {
+        $(".name_input").autocomplete({
+            source: function( request, response ) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_names',
+                    dataType: 'json',
+                    data: { value: request.term },
+                    success: function(data) {
+                        response(
+                            $.map(data, function(item) {
+                                return {
+                                    label: item.UserName,
+                                    value: item.UserName,
+                                    id: item.ID
+                                };
+                            })
+                        );
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $('#name_id').val( ui.item.id );
+                $('#usr').addClass('input-check');
+                name_check = true;
+            },
+            focus: function (event, ui) {
+                return false;
+            },
+            delay: 250
+        });
+    });
+
+    function bsubmit() {
+        $.ajax({
+            url: "/insert_improvements",
+            data: {
+                'name_id': $('#name_id').val(),
+                'name': $('#usr').val(),
+                'contents': $('textarea#contents').val()
+            },
+            datatype: 'json',
+            success: function(data) {
+                if( data['overlap'] == false ) {
+                    alert('알 수 없는 오류로 반영되지 않았습니다.');
+                } else {
+                    alert('성공적으로 반영되었습니다.');
+                    $('#name_id').val('');
+                    $('#usr').val('');
+                    $('#usr').removeClass("input-check");
+                    $('textarea#contents').val('');
+                    $("textarea#contents").removeClass("input-check");
+                }
+            }
+        })
+    }
+
+    $(document).ready(function() {
+        $(document).keydown(function(e) {
+            if( e.keyCode === 13 ) {
+                e.preventDefault();
+            }
+        });
+
+        $("#usr").on("propertychange change keyup paste input", function() {
+            if( $('#name_id').val( ) != '' && name_check == false ) {
+                $('#usr').removeClass("input-check");
+                $('#name_id').val( '' );
+            }
+            if( name_check ) { name_check = false; }
+        });
+        $("textarea#contents").on("propertychange change keyup paste input", function() {
+            if( $("textarea#contents").val() != '' ) {
+                $("textarea#contents").addClass("input-check");
+            } else {
+                $("textarea#contents").removeClass("input-check");
+            }
+        });
+    });
+</script>
+
+<h2><b>개선 사항</b></h2><hr>
+<div class='container'>
+    <div style="border: 1px solid #aaa; width: 80%; padding: 1em; margin: 0 auto;">
+        <div style="text-align: center; color: red; margin-bottom: 1em;"><b>사이트에 대한 개선사항을 입력해주세요.</b></div>
+        <div style="text-align: center;">
+            저의 사이트에 대한 관심 정말 감사합니다.<br>
+            개선사항을 보내주시면 참고하여 더 좋은 모습의 사이트가 되도록 노력하겠습니다.
+        </div>
+    </div>
+    <br>
+    <form action='/insert_improvements'>
+        <div class="form-group">
+            <input id="name_id" name="name_id" style='display:none;'>
+            <label for='usr'>닉네임</label>
+            <div class="input-group">
+                <input class="form-control name_input" id="usr" placeholder="닉네임" name="name" required>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for='usr'>내용</label>
+            <div class="input-group">
+                <textarea class="form-control" id="contents" name="contents" rows='5' required></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <button type='button' id='submit' onclick='bsubmit();' class='btn btn-primary' style='float:right;'> 보내기 </button>
+        </div>
+    </form>
+</div>

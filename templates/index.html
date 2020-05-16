@@ -34,11 +34,11 @@
 
     <script>
         function changeView( value ) {
-            const views = ['/gen_record', '/today_record', '/search_record', '/add_record'];
+            const views = ['/gen_record', '/today_record', '/search_record', '/add_record', '/improvements'];
             $("#content").load(views[value-1]);
             document.cookie = 'index = ' + value + ';'; 
 
-            const objs = [ $('#navbarSupportedContent > ul > li:nth-child(1)'), $('#navbarSupportedContent > ul > li:nth-child(2)'), $('#navbarSupportedContent > ul > li:nth-child(3)'), $('#navbarSupportedContent > ul > li:nth-child(2)') ];
+            const objs = [ $('#navbarSupportedContent > ul > li:nth-child(1)'), $('#navbarSupportedContent > ul > li:nth-child(2)'), $('#navbarSupportedContent > ul > li:nth-child(3)'), $('#navbarSupportedContent > ul > li:nth-child(2)'), $('#navbarSupportedContent > ul > li:nth-child(4)') ];
             objs.forEach(element => {
                 $(element).removeClass('active');
             }); $(objs[value-1]).addClass('active');
@@ -77,7 +77,10 @@
                     </li>
                     <li class="nav-item" value=3 onclick='changeView(this.value);'>
                         <a class="nav-link" style="cursor:pointer">기록 검색</a>
-                    </li>                    
+                    </li>
+                    <li class="nav-item" value=5 onclick='changeView(this.value);'>
+                        <a class="nav-link" style="cursor:pointer">개선 사항</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://tinyurl.com/ttskrnotice" target="_blank">공지 사항</a>
                     </li>
