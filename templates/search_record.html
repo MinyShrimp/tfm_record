@@ -62,7 +62,8 @@
             },
             focus: function (event, ui) {
                 return false;
-            }
+            },
+            delay: 250
         });
     });      
 
@@ -88,14 +89,14 @@
         });
 
         let today = new Date();   
-        let year = today.getFullYear(), month = today.getMonth() + 1, day = today.getDay();
+        let year = today.getFullYear(), month = today.getMonth() + 1, day = today.getDate();
         month = month >= 10 ? month : '0' + month;
         day = day >= 10 ? day : '0' + day;
 
         $("#start").val( year + "-" + month + "-" + day );
 
         let nextday = new Date(today); nextday.setDate(today.getDate() + 1);
-        year = nextday.getFullYear(), month = nextday.getMonth() + 1, day = nextday.getDay();
+        year = nextday.getFullYear(), month = nextday.getMonth() + 1, day = nextday.getDate();
         month = month >= 10 ? month : '0' + month;
         day = day >= 10 ? day : '0' + day;
 
@@ -110,11 +111,11 @@
                 <td width=50%>
                     <label for='start'><b>기간</b></label><br>
                     <div style="display: inline-block;">
-                        <input type='date' class='form-control' id='start' name='start' value='2020-05-15'>
+                        <input type='date' class='form-control' id='start' name='start' value=''>
                     </div> 
                     <span>~</span>
                     <div style="display: inline-block;">
-                        <input type='date' class='form-control' id='end' name='end' value='2020-05-15'>
+                        <input type='date' class='form-control' id='end' name='end' value=''>
                     </div>
                 </td>
                 <td width=50%>

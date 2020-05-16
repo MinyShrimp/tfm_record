@@ -1,22 +1,65 @@
+import os
+from datetime import datetime, time, date, timedelta
+
 from flask import Flask, request, jsonify, render_template, make_response, send_from_directory, redirect
 from module.db import DB
-
-from datetime import datetime, time, date, timedelta
 
 app = Flask(__name__)
 db = DB()
 
-#@app.route('/favicon.ico')
-#def favicon():
-#    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-#@app.errorhandler(404)
-#def page_not_found(error):
-#    return render_template('404.html')
+@app.route('/.well-known/acme-challenge/<txt>')
+def set_ssl(txt):
+    if txt == '3vwW5SRgZt4AEFehEHc84GFSUOusbDxGy9ttvB196t0' or txt == 'G-VR5cUD3SMMLSkyhWVENSCV5ho9sjv8bAp-w_CT2ic':
+        return txt+".N-8jdkqRBuf94BntZAldJXTCCX8-v1FUXWikPKxD_LY"
+    else:
+        return redirect('/')
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html')
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/delete_record_by_admin')
+def delete_record_by_admin():
+    id = request.args.get('id', '')
+    if id == '':
+        return redirect('/'), 404
+
+    data = db.get_record_by_id(id)[0]
+
+    if data is {}:
+        return redirect('/'), 404
+
+    if data['isDelete'] == 1:
+        return redirect('/'), 404
+
+    users = [ 
+        [ data['UserID_1'], data['UserName_1'], data['Score_1'] ],
+        [ data['UserID_2'], data['UserName_2'], data['Score_2'] ],
+        [ data['UserID_3'], data['UserName_3'], data['Score_3'] ],
+        [ data['UserID_4'], data['UserName_4'], data['Score_4'] ],
+    ]
+
+    for i, user in enumerate(users):
+        tmp = db.get_user(user[0])[0]
+
+        tmp['AverageScore'] = ((tmp['AverageScore'] * tmp['Amount']) - int(user[2])) / (tmp['Amount'] - 1)
+        tmp['AverageRank'] = ((tmp['AverageRank'] * tmp['Amount']) - (i + 1)) / (tmp['Amount'] - 1)
+        tmp['Rank_{}'.format((i+1))] -= 1
+        tmp['Amount'] -= 1
+
+        db.update_user(tmp)
+    
+    db.delete_record(data['ID'])
+
+    return redirect('/'), 404
 
 @app.route('/gen_record')
 def gen_record():
@@ -25,7 +68,8 @@ def gen_record():
 
     return make_response(render_template('gen_record.html',
         users = users,
-        enumerate = enumerate
+        enumerate = enumerate,
+        round = round
     )), 200
 
 @app.route('/name_check')
@@ -151,4 +195,6 @@ def search_record():
     return render_template('search_record.html')
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=80, debug=True)
+    #app.run(host='127.0.0.1', port=80, debug=True)
+    #app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=443, ssl_context=('./.https/certificate.crt', './.https/private.key'))

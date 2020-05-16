@@ -11,6 +11,7 @@
 </style>
 
 <h2><b>종합</b></h2><hr>
+<div style='text-align: right;'><span>※ 순위는 <b>평균 등수</b>와 <b>평균 점수</b>로 측정됩니다.</span></div>
 <table class='table table-striped' style='text-align: center;'>
     <thead class='thead-dark'>
         <tr>
@@ -31,8 +32,8 @@
             <td> {{ i + 1 }} </td>
             <td> {{ v['UserName'] }} </td>
             <td> {{ v['Amount'] }} </td>
-            <td> {{ v['AverageScore'] }} </td>
-            <td> {{ v['AverageRank'] }} </td>
+            <td> {{ round(v['AverageScore'], 1) }} </td>
+            <td> {{ round(v['AverageRank'], 1) }} </td>
             <td> {{ v['Rank_1'] }} </td>
             <td> {{ v['Rank_2'] }} </td>
             <td> {{ v['Rank_3'] }} </td>

@@ -3,15 +3,25 @@
 <!--<link href="{{ url_for('static', filename='css/add_record.css') }}" rel="stylesheet">-->
 <style>
     .label {
-        width:20%; 
-        height:50px; 
-        border: 1px solid #dee2e6; 
+        width:20%;
+        height:50px;
+        border: 1px solid #dee2e6;
         line-height: 50px;
         background: white;
     }
 
     .checked {
         background: lightblue !important;
+    }
+
+    .input-check {
+        border: 2px solid lightblue !important;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 
     @media all and (max-width:768px) {
@@ -35,6 +45,7 @@
         }        
     }
 
+    var name_check = false, corp_check = false;
     $(function () {
         $(".corp_input").autocomplete({
             source: function( request, response ) {
@@ -59,10 +70,16 @@
             select: function (event, ui) {
                 let id = $(this).attr('id');
                 $('#corp_id_' + id.charAt(id.length - 1)).val( ui.item.id );
+
+                if( $('#corp_id_' + id.charAt(id.length - 1)).val( ) != '' ) {
+                    $('#corporation_' + id.charAt(id.length - 1)).addClass('input-check');
+                    corp_check = true;
+                }
             },
             focus: function (event, ui) {
                 return false;
-            }
+            },
+            delay: 250
         });
 
         $(".name_input").autocomplete({
@@ -88,42 +105,85 @@
             select: function (event, ui) {
                 let id = $(this).attr('id');
                 $('#name_id_' + id.charAt(id.length - 1)).val( ui.item.id );
+
+                if( $('#name_id_' + id.charAt(id.length - 1)).val( ) != '' ) {
+                    $('#usr_' + id.charAt(id.length - 1)).addClass('input-check');
+                    name_check = true;
+                }
             },
             focus: function (event, ui) {
                 return false;
-            }
+            },
+            delay: 250
         });
     });
 
-    $("#add_record_form").submit(function(e) {
-        if( $('#usr_1').val() === $('#usr_2').val() || $('#usr_2').val() === $('#usr_3').val() || $('#usr_3').val() === $('#usr_4').val() ) {
-            alert('이름을 확인해주세요.'); e.preventDefault();
-        }
-
-        if( $('#corporation_1').val() === $('#corporation_2').val() || $('#corporation_2').val() === $('#corporation_3').val() || $('#corporation_3').val() === $('#corporation_4').val() ) {
-            alert('기업을 확인해주세요.'); e.preventDefault();
-        }
-
-        if( $('#score_1').val()/1 < $('#score_2').val()/1 || $('#score_2').val()/1 < $('#score_3').val()/1 || $('#score_3').val()/1 < $('#score_4').val()/1 ) {
-            alert('점수를 확인해주세요.'); e.preventDefault();
-        }
-
-        let ext_msg = "";
-        for(var i = 1; i <= 4; i++) {
-            if($('#e'+i).is(":checked")) {
-                ext_msg += $('#e'+i).val();
+    $(document).ready(function() {
+        $("#add_record_form").submit(function(e) {
+            if( $('#usr_1').val() === $('#usr_2').val() || $('#usr_2').val() === $('#usr_3').val() || $('#usr_3').val() === $('#usr_4').val() ) {
+                alert('이름을 확인해주세요.'); e.preventDefault(); return false;
             }
-        }
-        $('#ext').val( ext_msg );
 
-        document.cookie = 'index = 2;'; 
-    })
+            if( $('#name_id_1').val() === "" || $('#name_id_2').val() === "" || $('#name_id_3').val() === "" || $('#name_id_4').val() === "" ) {
+                alert('이름을 확인해주세요.'); e.preventDefault(); return false;
+            }
 
-    $(document).keydown(function(e) {
-        if( e.keyCode === 13 ) {
-            e.preventDefault();
-        }
+            if( $('#corporation_1').val() === $('#corporation_2').val() || $('#corporation_2').val() === $('#corporation_3').val() || $('#corporation_3').val() === $('#corporation_4').val() ) {
+                alert('기업을 확인해주세요.'); e.preventDefault(); return false;
+            }
+
+            if( $('#corp_id_1').val() === "" || $('#corp_id_2').val() === "" || $('#corp_id_3').val() === "" || $('#corp_id_4').val() === "" ) {
+                alert('기업을 확인해주세요.'); e.preventDefault(); return false;
+            }
+
+            if( $('#score_1').val()/1 < $('#score_2').val()/1 || $('#score_2').val()/1 < $('#score_3').val()/1 || $('#score_3').val()/1 < $('#score_4').val()/1 ) {
+                alert('점수를 확인해주세요.'); e.preventDefault(); return false;
+            }
+
+            let ext_msg = "";
+            for(var i = 1; i <= 4; i++) {
+                if($('#e'+i).is(":checked")) {
+                    ext_msg += $('#e'+i).val();
+                }
+            }
+            $('#ext').val( ext_msg );
+
+            document.cookie = 'index = 2;'; 
+        })
+
+        $(document).keydown(function(e) {
+            if( e.keyCode === 13 ) {
+                e.preventDefault();
+            }
+        });
+
+        {% for _ in range(1, 5) %}
+        $("#usr_{{_}}").on("propertychange change keyup paste input", function() {
+            if( $('#name_id_{{_}}').val( ) != '' && name_check == false ) {
+                $('#usr_{{_}}').removeClass("input-check");
+                $('#name_id_{{_}}').val( '' );
+            }
+            if( name_check ) { name_check = false; }
+        });
+        $("#corporation_{{_}}").on("propertychange change keyup paste input", function() {
+            if( $('#corp_id_{{_}}').val( ) != '' && corp_check == false ) {
+                $('#corporation_{{_}}').removeClass("input-check");
+                $('#corp_id_{{_}}').val( '' );
+                corp_check = false;
+            }
+            if( corp_check ) { corp_check = false; }
+        });
+        $("#score_{{_}}").on("propertychange change keyup paste input", function() {
+            if( $("#score_{{_}}").val() != '' ) {
+                $("#score_{{_}}").addClass("input-check");
+            } else {
+                $("#score_{{_}}").removeClass("input-check");
+            }
+        });
+        {% endfor %}
     });
+
+    
 </script>
 
 <form action="/insert_record" id='add_record_form'>
@@ -158,14 +218,18 @@
             </div>
             <div style='width: 30%; display: inline-block;'>
                 <input id="name_id_{{_}}" name="name_id_{{_}}" style='display:none;'>
-                <input class="form-control name_input" id="usr_{{_}}" placeholder="닉네임" name="name_{{_}}" required>
+                <div class="input-group">
+                    <input class="form-control name_input" id="usr_{{_}}" placeholder="닉네임" name="name_{{_}}" required>
+                </div>
             </div>
             <div style='width: 30%; display: inline-block;'>
                 <input id="corp_id_{{_}}" name="corp_id_{{_}}" style='display:none;'>
-                <input class="form-control corp_input" id='corporation_{{_}}' placeholder="기업" name="corp_{{_}}" required>
+                <div class="input-group">
+                    <input class="form-control corp_input" id='corporation_{{_}}' placeholder="기업" name="corp_{{_}}" required>
+                </div>
             </div>
             <div style='width: 20%; display: inline-block;'>
-                <input class="form-control" id="score_{{_}}" placeholder="점수" name="score_{{_}}" required>
+                <input type="number" class="form-control" id="score_{{_}}" placeholder="점수" name="score_{{_}}" required>
             </div>
         </div><br>
         {% endfor %}
@@ -175,6 +239,7 @@
             <div style="text-align: center; color: red; margin-bottom: 1em;"><b>등록하기전에 확인해주세요.</b></div>
             <div style="text-align: center;">
                 닉네임과 기업을 검색하고 선택하셨습니까? 선택하셔야 제대로 등록이 됩니다.<br>
+                만약, 선택하지 않았다면 테두리가 <b>초록색</b>으로 변하지 않았을 것입니다.<br>
                 닉네임이 등록이 되어있지 않으면 먼저 <b>"종합" > "신규 가입"</b> 를 선택하여 등록해주세요.
             </div>
         </div>

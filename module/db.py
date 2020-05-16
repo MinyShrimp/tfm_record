@@ -80,11 +80,11 @@ class DB:
     def get_user(self, id):
         _datas = []
         try:
-            if is_regular([id]) is False:
+            if is_regular([str(id)]) is False:
                 raise TypeError
 
             self.__connect()
-            self.cur.execute("select * from user where ID='{}';".format(id))
+            self.cur.execute("select * from user where ID={};".format(id))
             _datas = self.cur.fetchall()
         except Exception as e:
             print("파일 연결 실패", e)  
@@ -162,7 +162,19 @@ class DB:
         _datas = []
         try:
             self.__connect()
-            self.cur.execute("select * from TFM where DATE_TIME between {} and {} and Users like '%{}%' and Extension like '%{}%' ORDER BY DATE_TIME {};".format(startT, endT, name, ext, "" if is_sort else "DESC"))
+            self.cur.execute("select * from TFM where DATE_TIME between {} and {} and Users like '%{}%' and Extension like '%{}%' AND isDelete=FALSE ORDER BY DATE_TIME {};".format(startT, endT, name, ext, "" if is_sort else "DESC"))
+            _datas = self.cur.fetchall()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+        return _datas
+    
+    def get_record_by_id(self, id):
+        _datas = []
+        try:
+            self.__connect()
+            self.cur.execute("select * from TFM where id={} AND isDelete=FALSE;".format(id))
             _datas = self.cur.fetchall()
         except Exception as e:
             print("파일 연결 실패", e)  
@@ -239,6 +251,24 @@ class DB:
                 UPDATE user 
                 SET AverageRank={}, AverageScore={}, Amount={}, Rank_1={}, Rank_2={}, Rank_3={}, Rank_4={}
                 where ID={};""".format(data['AverageRank'], data['AverageScore'], data['Amount'], data['Rank_1'], data['Rank_2'], data['Rank_3'], data['Rank_4'], data['ID'])
+            )
+            self.db.commit()
+        except Exception as e:
+            print("파일 연결 실패", e)  
+        finally:
+            self.__close()
+    
+    def delete_record(self, id):
+        try:
+            if is_regular([str(id)]) is False:
+                print(id)
+                raise TypeError
+
+            self.__connect()
+            self.cur.execute("""
+                UPDATE TFM 
+                SET isDelete=TRUE
+                where ID={};""".format(id)
             )
             self.db.commit()
         except Exception as e:
