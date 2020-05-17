@@ -227,7 +227,7 @@ class DB:
                 {}, '{}', {}, {}, '{}', 
                 {}, '{}', {}, {}, '{}', 
                 {}, '{}', {}, {}, '{}', 
-                {}, '{}', '{}', '{}'
+                {}, '{}', '{}', '{}', FALSE
             """.format(
                 user_datas[0][0], user_datas[0][1], user_datas[0][4], user_datas[0][2], user_datas[0][3], 
                 user_datas[1][0], user_datas[1][1], user_datas[1][4], user_datas[1][2], user_datas[1][3], 
@@ -249,7 +249,7 @@ class DB:
                     UserID_2, UserName_2, Score_2, CompanyID_2, Company_2, 
                     UserID_3, UserName_3, Score_3, CompanyID_3, Company_3, 
                     UserID_4, UserName_4, Score_4, CompanyID_4, Company_4, 
-                    DATE_TIME, Extension, Users, Companys
+                    DATE_TIME, Extension, Users, Companys, isDelete
                 ) values ({});""".format(data)
             )
             self.db.commit()
