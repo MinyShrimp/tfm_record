@@ -1,22 +1,19 @@
-<style>
-    .input-check {
-        border: 2px solid lightblue !important;
-    }
-</style>
 
-<script>
+<script type="text/javascript">
     var name_check = false;
     $(function () {
         $(".name_input").autocomplete({
-            source: function( request, response ) {
+            source: function (request, response) {
                 $.ajax({
                     type: 'GET',
                     url: '/get_names',
                     dataType: 'json',
-                    data: { value: request.term },
-                    success: function(data) {
+                    data: {
+                        value: request.term
+                    },
+                    success: function (data) {
                         response(
-                            $.map(data, function(item) {
+                            $.map(data, function (item) {
                                 return {
                                     label: item.UserName,
                                     value: item.UserName,
@@ -28,7 +25,7 @@
                 });
             },
             select: function (event, ui) {
-                $('#name_id').val( ui.item.id );
+                $('#name_id').val(ui.item.id);
                 $('#usr').addClass('input-check');
                 name_check = true;
             },
@@ -48,8 +45,8 @@
                 'contents': $('textarea#contents').val()
             },
             datatype: 'json',
-            success: function(data) {
-                if( data['overlap'] == false ) {
+            success: function (data) {
+                if (data['overlap'] == false) {
                     alert('알 수 없는 오류로 반영되지 않았습니다.');
                 } else {
                     alert('성공적으로 반영되었습니다.');
@@ -63,22 +60,24 @@
         })
     }
 
-    $(document).ready(function() {
-        $(document).keydown(function(e) {
-            if( e.keyCode === 13 ) {
+    $(document).ready(function () {
+        $(document).keydown(function (e) {
+            if (e.keyCode === 13) {
                 e.preventDefault();
             }
         });
 
-        $("#usr").on("propertychange change keyup paste input", function() {
-            if( $('#name_id').val( ) != '' && name_check == false ) {
+        $("#usr").on("propertychange change keyup paste input", function () {
+            if ($('#name_id').val() != '' && name_check == false) {
                 $('#usr').removeClass("input-check");
-                $('#name_id').val( '' );
+                $('#name_id').val('');
             }
-            if( name_check ) { name_check = false; }
+            if (name_check) {
+                name_check = false;
+            }
         });
-        $("textarea#contents").on("propertychange change keyup paste input", function() {
-            if( $("textarea#contents").val() != '' ) {
+        $("textarea#contents").on("propertychange change keyup paste input", function () {
+            if ($("textarea#contents").val() != '') {
                 $("textarea#contents").addClass("input-check");
             } else {
                 $("textarea#contents").removeClass("input-check");

@@ -1,30 +1,4 @@
-<h2><b>기록 검색</b></h2><hr>
-
-<!--<link href="{{ url_for('static', filename='css/add_record.css') }}" rel="stylesheet">-->
-<style>
-    .label {
-        width:20%; 
-        height:50px; 
-        border: 1px solid #dee2e6; 
-        line-height: 50px;
-        background: white;
-    }
-
-    .checked {
-        background: lightblue !important;
-    }
-
-    @media all and (max-width:768px) {
-        .label {
-            display: block;
-            width: 80%;
-            margin: 0 auto;
-            margin-bottom: 1em;
-        }
-    }
-</style>
-
-<script>
+<script type="text/javascript">
     function toggle(obj) {
         if($(obj).val() == 0) {
             $(obj).addClass('checked');
@@ -33,9 +7,9 @@
             $(obj).removeClass('checked');
             $(obj).val(0);
         }        
-    }
+    } 
 
-    $(function() {
+    $(document).ready(function() {
         $("#name").autocomplete({
             source: function( request, response ) {
                 $.ajax({
@@ -57,17 +31,14 @@
                 });
             },
             select: function (event, ui) {
-                let id = $(this).attr('id');
-                $('#name_id_' + id.charAt(id.length - 1)).val( ui.item.id );
+                
             },
             focus: function (event, ui) {
                 return false;
             },
             delay: 250
         });
-    });      
-
-    $(document).ready(function() {
+        
         $("#submit").click(function() {
             let ext_msg = "";
             for(var i = 1; i <= 4; i++) {
@@ -88,22 +59,25 @@
             }
         });
 
-        let today = new Date();   
-        let year = today.getFullYear(), month = today.getMonth() + 1, day = today.getDate();
-        month = month >= 10 ? month : '0' + month;
-        day = day >= 10 ? day : '0' + day;
+        $(document).ready(function() {
+            let today = new Date();   
+            let year = today.getFullYear(), month = today.getMonth() + 1, day = today.getDate();
+            month = month >= 10 ? month : '0' + month;
+            day = day >= 10 ? day : '0' + day;
 
-        $("#start").val( year + "-" + month + "-" + day );
+            $("#start").val( year + "-" + month + "-" + day );
 
-        let nextday = new Date(today); nextday.setDate(today.getDate() + 1);
-        year = nextday.getFullYear(), month = nextday.getMonth() + 1, day = nextday.getDate();
-        month = month >= 10 ? month : '0' + month;
-        day = day >= 10 ? day : '0' + day;
+            let nextday = new Date(today); nextday.setDate(today.getDate() + 1);
+            year = nextday.getFullYear(), month = nextday.getMonth() + 1, day = nextday.getDate();
+            month = month >= 10 ? month : '0' + month;
+            day = day >= 10 ? day : '0' + day;
 
-        $("#end").val( year + "-" + month + "-" + day );
+            $("#end").val( year + "-" + month + "-" + day );
+        });    
     });
 </script>
 
+<h2><b>기록 검색</b></h2><hr>
 <form id='search_record' action='/show_records'>
     <div class='container'>
         <table width=100%>

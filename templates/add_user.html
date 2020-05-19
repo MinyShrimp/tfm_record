@@ -1,4 +1,5 @@
-<script>
+
+<script type="text/javascript">
     function name_check() {
         $.ajax({
             url: "/name_check",
@@ -19,35 +20,23 @@
         })
     }
 
-    $("#add_user_form").submit(function(e) {
-        if( !($('#check').is(":disabled")) ) {
-            alert('중복확인을 눌러주세요.');
-            e.preventDefault();
-        }
-    })
+    $(document).ready(function() {
+        $("#add_user_form").submit(function(e) {
+            if( !($('#check').is(":disabled")) ) {
+                alert('중복확인을 눌러주세요.');
+                e.preventDefault();
+            }
+        });
 
-    $("#usr").on("propertychange change keyup paste input", function() {
-        if( ($('#check').is(":disabled")) ) {
-            $('#check').attr('disabled', false);
-        }
-    })
+        $("#usr").on("propertychange change keyup paste input", function() {
+            if( ($('#check').is(":disabled")) ) {
+                $('#check').attr('disabled', false);
+            }
+        });
+    });
+
+    
 </script>
-
-<style>
-    #usr {
-        display: inline-block;
-        width: 80%;
-    }
-
-    #check {
-        display: inline-block;
-        width: 18%;
-        height: 38px;
-        position: absolute;
-        font-size: 12px;
-        margin-left: 4px;
-    }
-</style>
 
 <form action="/insert_user" id='add_user_form'>
     <div class="form-group">

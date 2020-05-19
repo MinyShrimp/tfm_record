@@ -1,0 +1,70 @@
+.label {
+    width:20%;
+    height:50px;
+    border: 1px solid #dee2e6;
+    line-height: 50px;
+    background: white;
+}
+
+.checked {
+    background: lightblue !important;
+}
+
+.input-check {
+    border: 2px solid lightblue !important;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#usr {
+    display: inline-block;
+    width: 80%;
+}
+
+#check {
+    display: inline-block;
+    width: 18%;
+    height: 38px;
+    position: absolute;
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.today {
+    width: 100%; 
+    padding-top: 1em;
+    padding-bottom: 0;
+    text-align: center;
+    border-bottom: 1px solid black;
+}
+
+.today:first-child {
+    border-top: 1px solid black;
+}
+
+.today th, .today td {
+    border: none;
+}
+
+.plusBtn {
+    position: fixed;
+    left: 50vw;
+    top: 90vh;
+}
+
+.table tr:last-child {
+    border-bottom: 1px solid #dee2e6;
+}
+
+@media all and (max-width:768px) {
+    .label {
+        display: block;
+        width: 80%;
+        margin: 0 auto;
+        margin-bottom: 1em;
+    }
+}
